@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -49,6 +49,41 @@ export default function StudentResults() {
     return /^\d{12}$/.test(rollNo)
   }
 
+  const normalizeUrl = (inputUrl: string) => {
+    const baseUrl = inputUrl.includes('www.') 
+      ? inputUrl 
+      : inputUrl.replace('https://', 'https://www.');
+    return baseUrl;
+  }
+
+  const fetchResultWithFallback = async (htno: string, inputUrl: string) => {
+    try {
+      const urls = [
+        inputUrl,
+        inputUrl.includes('www.') ? inputUrl.replace('www.', '') : inputUrl.replace('https://', 'https://www.')
+      ];
+
+      for (const url of urls) {
+        try {
+          const response = await fetch('/api/results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, htno })
+          });
+
+          if (response.ok) {
+            return await response.json();
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+      throw new Error('Failed to fetch results from all URLs');
+    } catch (error) {
+      throw error;
+    }
+  }
+
   const fetchResults = async () => {
     if (!validateRollNo(startRollNo) || !validateRollNo(endRollNo)) {
       setError("Please enter valid 12-digit roll numbers.");
@@ -69,19 +104,10 @@ export default function StudentResults() {
 
     for (let rollNo = start; rollNo <= end; rollNo++) {
       try {
-        const response = await fetch('/api/results', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url, htno: rollNo.toString().padStart(12, '0') }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchResultWithFallback(
+          rollNo.toString().padStart(12, '0'),
+          normalizeUrl(url)
+        );
         setResults(prev => [...prev, data.data]);
       } catch (error) {
         console.error('Error fetching results:', error);
@@ -146,15 +172,15 @@ export default function StudentResults() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container mx-auto p-2 md:p-4 space-y-4 md:space-y-8">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-primary mb-2">OU Results Extractor</h1>
-        <p className="text-xl text-muted-foreground">Easily fetch and analyze student results from Osmania University</p>
+        <h1 className="text-2xl md:text-4xl font-bold text-primary mb-2">OU Results Extractor</h1>
+        <p className="text-sm md:text-xl text-muted-foreground">Easily fetch and analyze student results from Osmania University</p>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Enter Details</CardTitle>
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-xl md:text-2xl">Enter Details</CardTitle>
           <CardDescription>Provide the range of roll numbers and the results URL</CardDescription>
         </CardHeader>
         <CardContent>
@@ -166,6 +192,7 @@ export default function StudentResults() {
                 placeholder="e.g., 245521733150"
                 value={startRollNo}
                 onChange={(e) => setStartRollNo(e.target.value)}
+                className="text-sm md:text-base"
               />
             </div>
             <div className="space-y-2">
@@ -175,6 +202,7 @@ export default function StudentResults() {
                 placeholder="e.g., 245521733155"
                 value={endRollNo}
                 onChange={(e) => setEndRollNo(e.target.value)}
+                className="text-sm md:text-base"
               />
             </div>
             <div className="space-y-2">
@@ -184,6 +212,7 @@ export default function StudentResults() {
                 placeholder="Enter the OU results URL"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
+                className="text-sm md:text-base"
               />
             </div>
           </div>
@@ -200,7 +229,7 @@ export default function StudentResults() {
       {error && (
         <Card className="bg-red-50 border-red-200">
           <CardContent className="pt-6">
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-600 text-sm md:text-base">{error}</p>
           </CardContent>
         </Card>
       )}
@@ -208,36 +237,36 @@ export default function StudentResults() {
       {results.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex justify-between items-center">
+            <CardTitle className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <span>Results</span>
-              <div className="space-x-2">
-                <Button onClick={downloadExcel} variant="outline" size="sm">
+              <div className="flex gap-2 w-full md:w-auto">
+                <Button onClick={downloadExcel} variant="outline" size="sm" className="flex-1 md:flex-none">
                   <FileSpreadsheet className="mr-2 h-4 w-4" />
                   Excel
                 </Button>
-                <Button onClick={downloadPDF} variant="outline" size="sm">
+                <Button onClick={downloadPDF} variant="outline" size="sm" className="flex-1 md:flex-none">
                   <FilePdf className="mr-2 h-4 w-4" />
                   PDF
                 </Button>
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Hall Ticket No.</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>SGPA</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead className="whitespace-nowrap">Hall Ticket No.</TableHead>
+                  <TableHead className="whitespace-nowrap">Name</TableHead>
+                  <TableHead className="whitespace-nowrap">SGPA</TableHead>
+                  <TableHead className="whitespace-nowrap">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {results.map((result) => (
                   <TableRow key={result.personalDetails?.hallTicketNo || `row-${Math.random()}`}>
-                    <TableCell>{result.personalDetails?.hallTicketNo}</TableCell>
-                    <TableCell>{result.personalDetails?.name}</TableCell>
-                    <TableCell className={getSgpaColor(result.result?.sgpa || '')}>
+                    <TableCell className="text-sm">{result.personalDetails?.hallTicketNo}</TableCell>
+                    <TableCell className="text-sm">{result.personalDetails?.name}</TableCell>
+                    <TableCell className={`text-sm ${getSgpaColor(result.result?.sgpa || '')}`}>
                       {result.result?.sgpa}
                     </TableCell>
                     <TableCell>
@@ -245,16 +274,16 @@ export default function StudentResults() {
                         <DialogTrigger asChild>
                           <Button variant="outline" size="sm">More Info</Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto">
+                        <DialogContent className="max-w-[95vw] md:max-w-[90vw] max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
-                            <DialogTitle>{result.personalDetails?.name} - Details</DialogTitle>
+                            <DialogTitle className="text-lg md:text-xl">{result.personalDetails?.name} - Details</DialogTitle>
                           </DialogHeader>
                           <div className="mt-4 space-y-4">
                             <Card>
                               <CardHeader>
-                                <CardTitle>Personal Details</CardTitle>
+                                <CardTitle className="text-base md:text-lg">Personal Details</CardTitle>
                               </CardHeader>
-                              <CardContent>
+                              <CardContent className="text-sm md:text-base space-y-2">
                                 <p><strong>Hall Ticket No:</strong> {result.personalDetails?.hallTicketNo}</p>
                                 <p><strong>Father's Name:</strong> {result.personalDetails?.fatherName}</p>
                                 <p><strong>Gender:</strong> {result.personalDetails?.gender}</p>
@@ -264,27 +293,27 @@ export default function StudentResults() {
                             {result.marks && (
                               <Card>
                                 <CardHeader>
-                                  <CardTitle>Marks</CardTitle>
+                                  <CardTitle className="text-base md:text-lg">Marks</CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="overflow-x-auto">
                                   <Table>
                                     <TableHeader>
                                       <TableRow>
-                                        <TableHead>Subject Code</TableHead>
-                                        <TableHead>Subject Name</TableHead>
-                                        <TableHead>Credits</TableHead>
-                                        <TableHead>Grade Points</TableHead>
-                                        <TableHead>Grade</TableHead>
+                                        <TableHead className="whitespace-nowrap">Subject Code</TableHead>
+                                        <TableHead className="whitespace-nowrap">Subject Name</TableHead>
+                                        <TableHead className="whitespace-nowrap">Credits</TableHead>
+                                        <TableHead className="whitespace-nowrap">Grade Points</TableHead>
+                                        <TableHead className="whitespace-nowrap">Grade</TableHead>
                                       </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                       {result.marks.map((mark, index) => (
                                         <TableRow key={`${result.personalDetails?.hallTicketNo}-mark-${index}`}>
-                                          <TableCell>{mark.subCode}</TableCell>
-                                          <TableCell>{mark.subjectName}</TableCell>
-                                          <TableCell>{mark.credits}</TableCell>
-                                          <TableCell>{mark.gradePoints}</TableCell>
-                                          <TableCell>{mark.gradeSecurity}</TableCell>
+                                          <TableCell className="text-sm">{mark.subCode}</TableCell>
+                                          <TableCell className="text-sm">{mark.subjectName}</TableCell>
+                                          <TableCell className="text-sm">{mark.credits}</TableCell>
+                                          <TableCell className="text-sm">{mark.gradePoints}</TableCell>
+                                          <TableCell className="text-sm">{mark.gradeSecurity}</TableCell>
                                         </TableRow>
                                       ))}
                                     </TableBody>
@@ -295,9 +324,9 @@ export default function StudentResults() {
                             {result.result && (
                               <Card>
                                 <CardHeader>
-                                  <CardTitle>Result</CardTitle>
+                                  <CardTitle className="text-base md:text-lg">Result</CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="text-sm md:text-base space-y-2">
                                   <p><strong>Semester:</strong> {result.result.semester}</p>
                                   <p><strong>SGPA:</strong> {result.result.sgpa}</p>
                                   <p><strong>CGPA:</strong> {result.result.cgpa}</p>
@@ -318,4 +347,3 @@ export default function StudentResults() {
     </div>
   )
 }
-
