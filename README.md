@@ -146,8 +146,6 @@ Contributions are welcome! Here's how you can help:
 4. Push to branch: `git push origin feature/YourFeature`
 5. Submit a pull request
 
-
-
 ## 📞 Contact
 
 Sai Abhiram Jaini - [@saiabhiramjaini](https://github.com/saiabhiramjaini)
