@@ -17,6 +17,7 @@
     "@types/html2canvas": "^0.5.35",
     "@types/jspdf": "^1.3.3",
     "@types/xlsx": "^0.0.35",
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
