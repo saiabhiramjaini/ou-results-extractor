@@ -4,6 +4,8 @@ A web application built with Next.js and TypeScript for extracting and analyzing
 
 ![OU Results Extractor](https://github.com/user-attachments/assets/87da1d77-ea14-4913-8e74-6d4783e3668d)
 
+![Image](https://github.com/user-attachments/assets/6ee0748a-15e1-4803-a3e4-b64786427ae2)
+
 
 ## 🌟 Features
 
