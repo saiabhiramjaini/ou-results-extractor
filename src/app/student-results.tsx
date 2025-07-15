@@ -258,6 +258,7 @@ export default function StudentResults() {
                   <TableHead className="whitespace-nowrap text-xs sm:text-sm">Hall Ticket No.</TableHead>
                   <TableHead className="whitespace-nowrap text-xs sm:text-sm">Name</TableHead>
                   <TableHead className="whitespace-nowrap text-xs sm:text-sm">SGPA</TableHead>
+                  <TableHead className="whitespace-nowrap text-xs sm:text-sm">CGPA</TableHead>
                   <TableHead className="whitespace-nowrap text-xs sm:text-sm">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -268,6 +269,9 @@ export default function StudentResults() {
                     <TableCell className="text-xs sm:text-sm">{result.personalDetails?.name}</TableCell>
                     <TableCell className={`text-xs sm:text-sm ${getSgpaColor(result.result?.sgpa || '')}`}>
                       {result.result?.sgpa}
+                    </TableCell>
+                    <TableCell className={`text-xs sm:text-sm ${getSgpaColor(result.result?.cgpa || '')}`}>
+                      {result.result?.cgpa}
                     </TableCell>
                     <TableCell>
                       <Dialog>
