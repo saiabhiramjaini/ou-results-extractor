@@ -1,0 +1,11 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orange circular background -->
+  <circle cx="90" cy="90" r="90" fill="#e05d38"/>
+  
+  <!-- Document icon -->
+  <path d="M50 39C50 36.2386 52.2386 34 55 34H98.7929C100.084 34 101.323 34.5134 102.236 35.4265L127.574 60.7639C128.487 61.6771 129 62.9158 129 64.2071V141C129 143.761 126.761 146 124 146H55C52.2386 146 50 143.761 50 141V39Z" fill="white"/>
+  
+  <!-- Document lines -->
+  <rect x="67" y="84" width="46" height="8" rx="4" fill="#e05d38"/>
+  <rect x="67" y="102" width="34" height="8" rx="4" fill="#e05d38"/>
+</svg>

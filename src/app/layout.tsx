@@ -14,8 +14,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OU results extractor",
-  description: "",
+  title: "OU Results Extractor | Osmania University Results",
+  description: "Easily fetch and analyze student results from Osmania University with our modern, fast interface. Extract results in bulk and export to Excel or PDF.",
+  icons: {
+    icon: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      }
+    ],
+    apple: [
+      {
+        url: '/apple-touch-icon.svg',
+        type: 'image/svg+xml',
+      }
+    ],
+  },
 };
 
 export default function RootLayout({
