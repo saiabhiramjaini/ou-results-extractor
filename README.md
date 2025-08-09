@@ -2,9 +2,11 @@
 
 A web application built with Next.js and TypeScript for extracting and analyzing student results from Osmania University. This tool allows faculty and administrators to efficiently fetch results for multiple students and download them in various formats.
 
+![Image](https://github.com/user-attachments/assets/22522397-f846-441a-acc0-4a214f6727ff)
+
 ![OU Results Extractor](https://github.com/user-attachments/assets/da961aa2-5724-4cac-8f17-83d9be51418f)
 
-![Image](https://github.com/user-attachments/assets/22522397-f846-441a-acc0-4a214f6727ff)
+
 
 
 ## 🌟 Features
